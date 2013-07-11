@@ -1,0 +1,2 @@
+https://java.net/projects/jna/sources/svn/show/trunk/jnalib/dist/
+http://mvnrepository.com/artifact/net.java.dev.jna/jna/3.3.0
