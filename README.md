@@ -1,9 +1,25 @@
 jlo - use liblo in Java applications
 ====================================
 
+liblo is a great OSC library:
+
+* http://liblo.sourceforge.net/
+
+jlo makes use of liblo via JNA
+
+* http://en.wikipedia.org/wiki/Java_Native_Access
+
 See src/ch/lowres/jlo/test/*.java for example use
 
-javadoc
--------
+liblo and Java must be installed on your system to use jlo.
+
+any jlo client would be started like:
+
+```
+ $ java -cp <uri of jlo.jar>:<uri of jna.jar>:<more> app_using_jlo
+```
+
+jlo javadoc
+-----------
 
 * https://rawgithub.com/7890/jlo/master/doc/index.html
