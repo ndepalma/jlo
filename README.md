@@ -7,6 +7,7 @@ liblo is a great OSC library:
 
 jlo makes use of liblo via JNA
 
+* https://github.com/twall/jna
 * http://en.wikipedia.org/wiki/Java_Native_Access
 
 See src/ch/lowres/jlo/test/*.java for example use
