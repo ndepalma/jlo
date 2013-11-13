@@ -62,12 +62,34 @@ public class ServerTest
 
 	public static void main(String[] args)
 	{
-		final Server srv=new Server();
+		Server srv=null;
+
+		try
+		{
+			if(args.length>0)
+			{
+				srv=new Server(args[0]);
+			}
+			else
+			{
+				srv=new Server();
+			}
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+			System.exit(1);
+		}
+
+		System.out.println("server started on port: "+srv.getPort());
 
 		srv.addMethod("/my/path","sfihdcb",new ECALL());
 		//srv.addMethod("/my/path","fis",new ECALL());
 		
-		System.out.println("method added");
+		System.out.println("method added: /my/path;sfihdcb");
+
+		//local variable srv_ is accessed from within inner class; needs to be declared final
+		final Server srv_=srv;
 
 		new Thread()
 		{
@@ -80,7 +102,7 @@ public class ServerTest
 					{
 						//!
 						//Thread.sleep(1);
-						srv.recv();
+						srv_.recv();
 					}
 					catch(Exception e)
 					{

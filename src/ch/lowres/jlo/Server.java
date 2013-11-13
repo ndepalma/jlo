@@ -6,6 +6,10 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Native;
 import com.sun.jna.Callback;
 
+import java.net.ServerSocket;
+import java.net.DatagramSocket;
+import java.io.IOException;
+
 public class Server
 {
 	//interface describing liblo
@@ -23,10 +27,30 @@ public class Server
 		loServer=lo.lo_server_new_with_proto(null,iProto,null);
 		//System.out.println("server created: "+getUrl());
 	}
-	public Server(String port)
+
+	public Server(String sport) throws Exception
 	{
+		int port=0;
+		//int port_use=0;
+		boolean isavail=false;
+		try
+		{
+			port=Integer.parseInt(sport);
+			isavail=checkIfPortAvail(port);
+			//port_use=findNextFreePort(port);
+			//System.out.println("found free port "+port_use);
+		}
+		catch(Exception e)
+		{
+			throw new Exception("error: port is not an integer number.");
+		}
+		if(!isavail)
+		{
+			throw new Exception("error: port "+port+" is already used by another process.");
+		}
+
 		//using given port, no error handler
-		loServer=lo.lo_server_new_with_proto(port,iProto,null);
+		loServer=lo.lo_server_new_with_proto(""+port,iProto,null);
 		//System.out.println("server created: "+getUrl());
 	}
 	public Server(Pointer server)
@@ -65,4 +89,65 @@ public class Server
 	{
 		return lo.lo_send_message_from(na.getPointer(),loServer,path,msg.getPointer());
 	}
-}
+
+	public int findNextFreePort(int osc_server_port)
+	{
+		int scan_limit=osc_server_port+100;
+
+		while (osc_server_port<=scan_limit && !checkIfPortAvail (osc_server_port))
+		{
+			//keep on seeking next free port
+			osc_server_port++;
+		}
+		//final check
+		if (!checkIfPortAvail(osc_server_port))
+		{
+			return -1;
+		}
+		return osc_server_port;
+	}
+
+	/**
+	* Checks to see if a specific port is available.
+	*
+	* @param port the port to check for availability
+	*
+	* http://stackoverflow.com/questions/434718/sockets-discover-port-availability-using-java
+	*/
+	public static boolean checkIfPortAvail(int port) 
+	{
+		ServerSocket ss = null;
+		DatagramSocket ds = null;
+		try {
+			ss = new ServerSocket(port);
+			ss.setReuseAddress(true);
+			ds = new DatagramSocket(port);
+			ds.setReuseAddress(true);
+			return true;
+		} 
+		catch (IOException e) 
+		{
+		} 
+		finally 
+		{
+			if (ds != null) 
+			{
+				ds.close();
+			}
+
+			if (ss != null) 
+			{
+				try {
+					ss.close();
+				} 
+				catch (IOException e) 
+				{
+					/* should not be thrown */
+				}
+			}
+		}
+		return false;
+	} //end checkIfPortAvail
+
+
+}//end class Server
