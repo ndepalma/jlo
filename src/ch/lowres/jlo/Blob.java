@@ -11,7 +11,7 @@ public class Blob
 	//interface describing liblo
 	static LO lo = LIBLO.getInstance();
 
-	//pointer to liblo server
+	//pointer to liblo blob
 	Pointer loBlob;
 
 	public Blob(Pointer lo_blob)
