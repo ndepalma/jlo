@@ -149,19 +149,19 @@ public class Message
 	}
 	public int getInt(int index)
 	{
-		return (int)getArg(index);
+		return (Integer)getArg(index);
 	}
 	public float getFloat(int index)
 	{
-		return (float)getArg(index);
+		return (Float)getArg(index);
 	}
 	public long getLong(int index)
 	{
-		return (long)getArg(index);
+		return (Long)getArg(index);
 	}
 	public double getDouble(int index)
 	{
-		return (double)getArg(index);
+		return (Double)getArg(index);
 	}
 	public String getString(int index)
 	{
@@ -169,7 +169,7 @@ public class Message
 	}
 	public char getChar(int index)
 	{
-		return (char)getArg(index);
+		return (Character)getArg(index);
 	}
 	public Blob getBlob(int index)
 	{
