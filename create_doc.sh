@@ -5,4 +5,5 @@
 ./compile.sh
 
 rm -rf ./doc/*
-javadoc -d ./doc/ -classpath ./lib/jna-3.3.0.jar:./classes/ -sourcepath ./src/ ch.lowres.jlo
+#javadoc -d ./doc/ -classpath ./lib/jna-3.3.0.jar:./classes/ -sourcepath ./src/ ch.lowres.jlo
+ant -f ant_javadoc_graphml.xml
