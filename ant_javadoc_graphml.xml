@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<project name="jlo" default="javadoc" basedir=".">
+  <description>
+        build javadoc with diagrams using UmlGraph doclet
+    </description>
+<!--
+http://www.umlgraph.org/doc/cd-opt.html
+http://ant.apache.org/manual/Tasks/javadoc.html
+http://java.dzone.com/articles/reverse-engineer-source-code-u
+-->
+  <property name="src" location="src"/>
+  <property name="lib" location="lib"/>
+  <property name="out" location="doc"/>
+  <target name="javadoc" description="create javadoc with UML diagrams">
+    <mkdir dir="${out}"/>
+    <javadoc sourcepath="${src}" destdir="${out}" classpath="${lib}/jna-3.3.0.jar:classes" Private="yes">
+      <doclet name="org.umlgraph.doclet.UmlGraphDoc" path="${lib}/UmlGraph.jar">
+        <param name="-attributes"/>
+        <param name="-operations"/>
+        <param name="-qualify"/>
+        <param name="-types"/>
+        <param name="-visibility"/>
+        <!--
+<param name="-hide" value="" />
+	-->
+      </doclet>
+    </javadoc>
+    <apply executable="dot" dest="${out}" parallel="false">
+      <arg value="-Tpng"/>
+      <arg value="-o"/>
+      <targetfile/>
+      <srcfile/>
+      <fileset dir="${out}" includes="*.dot"/>
+      <mapper type="glob" from="*.dot" to="*.png"/>
+    </apply>
+  </target>
+</project>
