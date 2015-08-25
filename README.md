@@ -1,5 +1,12 @@
-jlo - use liblo in Java applications
+jlo extended - use liblo in Java applications
 ====================================
+
+NOTE: This version is a forked, extended version from the one in 7890/jlo. 
+
+Updates: 
+* Includes support for both UDP and TCP in both client and server
+* Enumeration support for the protocols for a cleaner interface
+* More working function calls into the lower level liblo library
 
 liblo is a great OSC library:
 
