@@ -16,7 +16,8 @@ public class Server
 	static LO lo = LIBLO.getInstance();
 
 	//pointer to liblo server
-	Pointer loServer;
+	Pointer loServer = null;
+        Pointer loServerThread = null;
 
 	//String sPort="4444";
 	int iProto=1; //UDP
@@ -24,13 +25,19 @@ public class Server
 	public Server()
 	{
 		//using random port, no error handler
-		loServer=lo.lo_server_new_with_proto(null,iProto,null);
+		loServerThread=lo.lo_server_thread_new_with_proto(null,iProto,null);
+                loServer = lo.lo_server_thread_get_server(loServerThread);
 		//System.out.println("server created: "+getUrl());
 	}
 
-	public Server(String sport) throws Exception
+        public Server(String sport) throws Exception {
+                this(sport, LO.LO_PROTOCOL.LO_TCP);
+        }
+
+        public Server(String sport, LO.LO_PROTOCOL proto) throws Exception
 	{
 		int port=0;
+                iProto = proto.getVal();
 		//int port_use=0;
 		boolean isavail=false;
 		try
@@ -50,7 +57,9 @@ public class Server
 		}
 
 		//using given port, no error handler
-		loServer=lo.lo_server_new_with_proto(""+port,iProto,null);
+		//loServerThread=lo.lo_server_thread_new_with_proto(""+port,iProto,null);
+                //loServer = lo.lo_server_thread_get_server(loServerThread);
+                loServer = lo.lo_server_new_with_proto(""+port,iProto,null);
 		//System.out.println("server created: "+getUrl());
 	}
 	public Server(Pointer server)
@@ -71,19 +80,32 @@ public class Server
 	}
 	public void free()
 	{
-		lo.lo_server_free(loServer);
+            if(loServerThread != null)
+		lo.lo_server_thread_free(loServerThread);
+            else if(loServer != null)
+                lo.lo_server_free(loServer);
 	}
 	//handle to method ? return method ?
 	public void addMethod(String path,String types,Callback handler)
 	{
 		lo.lo_server_add_method(loServer, path, types, handler, null);
 	}
+
+        public void rmMethod(String path, String types) {
+                lo.lo_server_del_method (loServer, path, types);
+	}
+
 	public void start()
 	{
+            lo.lo_server_thread_start(loServer);
 	}
 	public void recv()
 	{
 		lo.lo_server_recv(loServer);
+	}
+	public void recv_noblock(int timeout)
+	{
+		lo.lo_server_recv_noblock(loServer, timeout);
 	}
 	public int send(NetAddress na,String path,Message msg)
 	{
@@ -114,7 +136,7 @@ public class Server
 	*
 	* http://stackoverflow.com/questions/434718/sockets-discover-port-availability-using-java
 	*/
-	public static boolean checkIfPortAvail(int port) 
+	public static boolean checkIfPortAvail(int port)
 	{
 		ServerSocket ss = null;
 		DatagramSocket ds = null;
@@ -124,23 +146,23 @@ public class Server
 			ds = new DatagramSocket(port);
 			ds.setReuseAddress(true);
 			return true;
-		} 
-		catch (IOException e) 
+		}
+		catch (IOException e)
 		{
-		} 
-		finally 
+		}
+		finally
 		{
-			if (ds != null) 
+			if (ds != null)
 			{
 				ds.close();
 			}
 
-			if (ss != null) 
+			if (ss != null)
 			{
 				try {
 					ss.close();
-				} 
-				catch (IOException e) 
+				}
+				catch (IOException e)
 				{
 					/* should not be thrown */
 				}

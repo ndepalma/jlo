@@ -21,9 +21,9 @@ public class NetAddress
 		loAddress=lo.lo_address_new(dsthost,dstport);
 	}
 
-	public NetAddress(int proto,String dsthost, String dstport)
+	public NetAddress(LO.LO_PROTOCOL proto,String dsthost, String dstport)
 	{
-		loAddress=lo.lo_address_new_with_proto(proto,dsthost,dstport);
+                loAddress=lo.lo_address_new_with_proto(proto.getVal(),dsthost,dstport);
 	}
 
 	public Pointer getPointer()
@@ -63,4 +63,16 @@ public class NetAddress
 		return lo.lo_address_get_ttl(loAddress);
 	}
 
+        public void free()
+        {
+                lo.lo_address_free(loAddress);
+        }
+
+        public String getErrorString() {
+               return lo.lo_address_errstr(loAddress);
+        }
+
+        public int getLastError() {
+            return lo.lo_address_errno(loAddress);
+        }
 } //end class NetAddress

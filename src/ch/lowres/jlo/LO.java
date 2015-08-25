@@ -13,7 +13,7 @@ import com.sun.jna.Callback;
 import java.nio.ByteBuffer;
 
 //methods that are available in liblo.so
-public interface LO extends Library 
+public interface LO extends Library
 {
 	//============N E W  /  C R E A T E
 
@@ -29,20 +29,25 @@ public interface LO extends Library
 	//lo_server
 	public Pointer lo_server_new(String port, Pointer lo_err_handler);
 
-	/*
-	#define LO_DEFAULT 0x0
-	#define LO_UDP     0x1
-	#define LO_UNIX    0x2
-	#define LO_TCP     0x4
-	*/
+        public enum LO_PROTOCOL {
+            LO_DEFAULT(0x0),
+            LO_UDP(0x1),
+            LO_UNIX(0x2),
+            LO_TCP(0x4);
+            private final int val;
+            private LO_PROTOCOL(int v) { val = v; }
+            public int getVal() { return val; }
+        };
 	public Pointer lo_server_new_with_proto(String port, int proto, Pointer lo_err_handler);
-	
+
 	//lo_server
 	public Pointer lo_server_new_multicast(String group, String port, Pointer lo_err_handler);
 
 	//lo_server_thread
 	public Pointer lo_server_thread_new(String port, Pointer p_err);
+        public Pointer lo_server_thread_new_with_proto(String port, int proto, Pointer p_err);
 	public int lo_server_thread_start(Pointer lo_server_thread);
+	public Pointer lo_server_thread_get_server(Pointer p_err);
 
 	//lo_blob, const void* data
 	public Pointer lo_blob_new(int size, ByteBuffer buf);
@@ -62,7 +67,7 @@ public interface LO extends Library
 	public int lo_message_add_string(Pointer lo_message, String s);
 	public int lo_message_add_int32(Pointer lo_message, int i);
 	public int lo_message_add_int64(Pointer lo_message, long l);
-	public int lo_message_add_double(Pointer lo_message, double a);	
+	public int lo_message_add_double(Pointer lo_message, double a);
 	public int lo_message_add_char(Pointer lo_message, char c);
 
 	//lo_blob
@@ -93,9 +98,9 @@ public interface LO extends Library
 	public Pointer[] lo_message_get_argv(Pointer lo_message);
 
 	/*
-	uint32_t lo_timetag::sec 
-	The number of seconds since Jan 1st 1900 in the UTC timezone. 
-	uint32_t lo_timetag::frac 
+	uint32_t lo_timetag::sec
+	The number of seconds since Jan 1st 1900 in the UTC timezone.
+	uint32_t lo_timetag::frac
 	The fractions of a second offset from above, expressed as 1/2^32nds of a second
 	*/
 	//lo_timetag
@@ -111,6 +116,8 @@ public interface LO extends Library
 
 	public void lo_address_set_ttl(Pointer lo_address, int ttl);
 	public int lo_address_get_ttl(Pointer lo_address);
+	public int lo_address_errno(Pointer lo_address);
+	public String lo_address_errstr(Pointer lo_address);
 
 	//============S E N D  /  S E R V E R  /  M E T H O D
 
@@ -122,6 +129,9 @@ public interface LO extends Library
 
 	//lo_method
 	public Pointer lo_server_thread_add_method(Pointer lo_server_thread, String path, String typespec, Callback my_method_handler, Pointer user_data);
+
+        // lo_del_method
+        public void lo_server_del_method (Pointer lo_server, String path, String typespec);
 	public int lo_server_thread_events_pending(Pointer lo_server_thread);
 
 	public int lo_server_recv(Pointer lo_server);
@@ -131,8 +141,11 @@ public interface LO extends Library
 
 	public void lo_message_free(Pointer lo_message);
 
+	public void lo_address_free(Pointer lo_address);
+
 	public void lo_blob_free(Pointer lo_blob);
 
 	public void lo_server_free(Pointer lo_server);
 
+	public void lo_server_thread_free(Pointer p_err);
 } //end interface LO

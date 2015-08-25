@@ -13,7 +13,7 @@ public class Message
 
 	public Message()
 	{
-		loMessage=lo.lo_message_new();	
+		loMessage=lo.lo_message_new();
 	}
 	public Message(Pointer message)
 	{
@@ -178,6 +178,10 @@ public class Message
 	public int send(NetAddress na,String path)
 	{
 		return lo.lo_send_message(na.getPointer(),path,loMessage);
+	}
+        public int send_from(Server s, NetAddress na,String path)
+	{
+                return lo.lo_send_message_from(s.getPointer(), na.getPointer(),path,loMessage);
 	}
 	public void free()
 	{
